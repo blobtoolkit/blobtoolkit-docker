@@ -1,13 +1,12 @@
 #!/bin/bash
 
-# bash /opt/conda/bin/activate btk_env
-
 if [[ ! -z $VIEWER ]]; then
   if [[ -s "/blobtoolkit/conf/.env" ]]; then
     cp /blobtoolkit/conf/.env /blobtoolkit/viewer/.env
   fi
   cd /blobtoolkit/viewer
   npm start &
+  sleep 5
   npm run client &
 fi
 

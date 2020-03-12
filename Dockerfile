@@ -1,17 +1,26 @@
 FROM ubuntu:18.04
 LABEL maintainer="blobtoolkit@genomehubs.org"
 LABEL license="MIT"
-LABEL version="1.0"
+LABEL version="1.1"
 
 RUN apt-get update && apt-get -y install \
     build-essential \
+    dbus-x11 \
     firefox \
     git \
+    rsync \
     wget \
     xvfb \
     x11-utils
 
-RUN mkdir -p /blobtoolkit/datasets && mkdir -p /blobtoolkit/conf
+RUN mkdir -p /blobtoolkit/conf \
+    && mkdir -p /blobtoolkit/data \
+    && mkdir -p /blobtoolkit/databases/busco \
+    && mkdir -p /blobtoolkit/databases/ncbi_db \
+    && mkdir -p /blobtoolkit/databases/ncbi_taxdump \
+    && mkdir -p /blobtoolkit/databases/uniprot_db \
+    && mkdir -p /blobtoolkit/datasets \
+    && mkdir -p /blobtoolkit/output
 
 RUN useradd -m blobtoolkit \
     && chown -R blobtoolkit:blobtoolkit /blobtoolkit
@@ -39,7 +48,7 @@ RUN $CONDA_DIR/bin/conda create -n btk_env -c bioconda -c conda-forge -c anacond
     pyyaml \
     selenium \
     seqtk \
-    snakemake=4.5 \
+    snakemake=5.9 \
     tqdm \
     ujson \
     yq
@@ -48,47 +57,41 @@ RUN $CONDA_DIR/envs/btk_env/bin/pip install fastjsonschema
 
 WORKDIR /blobtoolkit
 
-ARG CACHE_BUSTER=a2f62c4c
+ARG CACHE_BUSTER=75febd4d
 
-RUN git clone https://github.com/blobtoolkit/blobtools2 \
-    && git clone https://github.com/blobtoolkit/insdc-pipeline \
-    && git clone https://github.com/blobtoolkit/specification \
-    && git clone https://github.com/blobtoolkit/viewer
+RUN git clone -b release/v2.2 https://github.com/blobtoolkit/blobtools2 \
+    && git clone -b release/v1.1 https://github.com/blobtoolkit/insdc-pipeline \
+    && git clone -b release/v1.0 https://github.com/blobtoolkit/specification \
+    && git clone -b release/v1.1 https://github.com/blobtoolkit/viewer
+
+ENV PATH /blobtoolkit/blobtools2:/blobtoolkit/specification:$CONDA_DIR/envs/btk_env/bin:$PATH
 
 ENV CONDA_DEFAULT_ENV btk_env
-
-ENV PATH $CONDA_DIR/envs/btk_env/bin:$PATH
 
 WORKDIR /blobtoolkit/viewer
 
 RUN npm install
 
-RUN mkdir -p /blobtoolkit/taxdump
-
-WORKDIR /blobtoolkit/taxdump
+WORKDIR /blobtoolkit/databases/ncbi_taxdump
 
 RUN curl -L ftp://ftp.ncbi.nih.gov/pub/taxonomy/new_taxdump/new_taxdump.tar.gz | tar xzf -;
 
 RUN printf '>seq\nACGT\n' > /tmp/assembly.fasta \
-    && ../blobtools2/blobtools create --fasta /tmp/assembly.fasta --taxid 3702 --taxdump ./ /tmp/dataset \
+    && ../../blobtools2/blobtools create --fasta /tmp/assembly.fasta --taxid 3702 --taxdump ./ /tmp/dataset \
     && rm -r /tmp/*
 
 WORKDIR /blobtoolkit
 
-RUN chmod 777 /blobtoolkit/viewer
-
-RUN touch geckodriver.log && chmod 666 geckodriver.log
-
 COPY startup.sh /blobtoolkit
 
-COPY .env /blobtoolkit/conf
+COPY .env /blobtoolkit/viewer
 
 EXPOSE 8000 8080
 
-USER root
+ENV PATH $CONDA_DIR/bin:$PATH
 
-RUN apt-get install dbus-x11
+RUN chmod ga+wx /blobtoolkit /blobtoolkit/databases 
 
-USER blobtoolkit
+ENV PYTHONPATH $CONDA_DIR/envs/btk_env/lib/python3.6/site-packages:$PYTHONPATH
 
 CMD /blobtoolkit/startup.sh
