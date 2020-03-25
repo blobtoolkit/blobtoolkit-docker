@@ -38,7 +38,7 @@ ARG CONDA_DIR=/home/blobtoolkit/miniconda3
 RUN echo ". $CONDA_DIR/etc/profile.d/conda.sh" >> ~/.bashrc
 
 RUN $CONDA_DIR/bin/conda create -n btk_env -c bioconda -c conda-forge -c anaconda -y \
-    python=3.6 \
+    python=3.7 \
     docopt \
     drmaa \
     geckodriver \
@@ -57,7 +57,7 @@ RUN $CONDA_DIR/envs/btk_env/bin/pip install fastjsonschema
 
 WORKDIR /blobtoolkit
 
-ARG CACHE_BUSTER=75febd4d
+ARG CACHE_BUSTER=75fe2c44
 
 RUN git clone -b release/v2.2 https://github.com/blobtoolkit/blobtools2 \
     && git clone -b release/v1.1 https://github.com/blobtoolkit/insdc-pipeline \
@@ -92,6 +92,8 @@ ENV PATH $CONDA_DIR/bin:$PATH
 
 RUN chmod ga+wx /blobtoolkit /blobtoolkit/databases 
 
-ENV PYTHONPATH $CONDA_DIR/envs/btk_env/lib/python3.6/site-packages:$PYTHONPATH
+#ENV PYTHONPATH $CONDA_DIR/envs/btk_env/lib/python3.6/site-packages:$PYTHONPATH
+
+#RUN find $CONDA_DIR/envs/btk_env/ -name ujson*
 
 CMD /blobtoolkit/startup.sh
