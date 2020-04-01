@@ -57,7 +57,7 @@ RUN $CONDA_DIR/envs/btk_env/bin/pip install fastjsonschema
 
 WORKDIR /blobtoolkit
 
-ARG CACHE_BUSTER=75fe2c44
+ARG CACHE_BUSTER=c5f31c4b
 
 RUN git clone -b release/v2.2 https://github.com/blobtoolkit/blobtools2 \
     && git clone -b release/v1.1 https://github.com/blobtoolkit/insdc-pipeline \
