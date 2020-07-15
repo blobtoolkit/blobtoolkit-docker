@@ -1,7 +1,7 @@
 FROM ubuntu:18.04
 LABEL maintainer="blobtoolkit@genomehubs.org"
 LABEL license="MIT"
-LABEL version="1.1"
+LABEL version="1.2"
 
 RUN apt-get update && apt-get -y install \
     build-essential \
@@ -43,6 +43,7 @@ RUN $CONDA_DIR/bin/conda create -n btk_env -c bioconda -c conda-forge -c anacond
     drmaa \
     geckodriver \
     nodejs=10 \
+    psutil \
     pysam \
     pyvirtualdisplay \
     pyyaml \
@@ -57,12 +58,12 @@ RUN $CONDA_DIR/envs/btk_env/bin/pip install fastjsonschema
 
 WORKDIR /blobtoolkit
 
-ARG CACHE_BUSTER=c5f31c4b
+ARG CACHE_BUSTER=c5f21c4c
 
-RUN git clone -b release/v2.2 https://github.com/blobtoolkit/blobtools2 \
-    && git clone -b release/v1.1 https://github.com/blobtoolkit/insdc-pipeline \
+RUN git clone -b release/v2.3 https://github.com/blobtoolkit/blobtools2 \
+    && git clone -b release/v1.2 https://github.com/blobtoolkit/insdc-pipeline \
     && git clone -b release/v1.0 https://github.com/blobtoolkit/specification \
-    && git clone -b release/v1.1 https://github.com/blobtoolkit/viewer
+    && git clone -b release/v1.2 https://github.com/blobtoolkit/viewer
 
 ENV PATH /blobtoolkit/blobtools2:/blobtoolkit/specification:$CONDA_DIR/envs/btk_env/bin:$PATH
 
@@ -92,7 +93,9 @@ ENV PATH $CONDA_DIR/bin:$PATH
 
 RUN chmod ga+wx /blobtoolkit /blobtoolkit/databases 
 
-#ENV PYTHONPATH $CONDA_DIR/envs/btk_env/lib/python3.6/site-packages:$PYTHONPATH
+RUN mkdir -p /blobtoolkit/.conda
+
+ENV PYTHONPATH $CONDA_DIR/envs/btk_env/lib/python3.7/site-packages:$PYTHONPATH
 
 #RUN find $CONDA_DIR/envs/btk_env/ -name ujson*
 
