@@ -6,9 +6,9 @@ LABEL version="1.3"
 WORKDIR /blobtoolkit
 
 RUN git clone -b release/v2.3 https://github.com/blobtoolkit/blobtools2 \
-    && git clone -b release/v1.2 https://github.com/blobtoolkit/viewer \
-    && git clone -b release/v1.3 https://github.com/blobtoolkit/insdc-pipeline \
-    && git clone -b release/v1.0 https://github.com/blobtoolkit/specification
+    && git clone -b release/v1.3.1 https://github.com/blobtoolkit/insdc-pipeline \
+    && git clone -b release/v1.0 https://github.com/blobtoolkit/specification \
+    && git clone -b release/v1.2 https://github.com/blobtoolkit/viewer
 
 ENV CONDA_DEFAULT_ENV btk_env
 
