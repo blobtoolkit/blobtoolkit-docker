@@ -8,6 +8,8 @@ if [[ ! -z $VIEWER ]]; then
   npm start &
   sleep 5
   npm run client &
+
+  tail -f /dev/null
 fi
 
 if [[ ! -z $ASSEMBLY ]]; then
@@ -41,46 +43,46 @@ if [[ ! -z $ASSEMBLY ]]; then
     exit 1
   fi
 
+  if [[ -z $VALIDATE_ONLY ]]; then
+    # Run pipeline
+    export AUGUSTUS_CONFIG_PATH=/blobtoolkit/datasets/augustus_conf
+    if [ ! -d $AUGUSTUS_CONFIG_PATH ]; then
+      cp -r /home/blobtoolkit/miniconda3/envs/busco4_env/config $AUGUSTUS_CONFIG_PATH
+    fi
+    snakemake -p $DRYRUN \
+              --directory /blobtoolkit/datasets \
+              --configfile /blobtoolkit/datasets/$ASSEMBLY.yaml \
+              --latency-wait 60 \
+              --rerun-incomplete \
+              --stats $ASSEMBLY.replaceHits.stats \
+              -j $THREADS \
+              -s /blobtoolkit/insdc-pipeline/Snakefile \
+              --resources btk=1
 
-  # Run pipeline
-  export AUGUSTUS_CONFIG_PATH=/blobtoolkit/datasets/augustus_conf
-  if [ ! -d $AUGUSTUS_CONFIG_PATH ]; then
-    cp -r /home/blobtoolkit/miniconda3/envs/busco4_env/config $AUGUSTUS_CONFIG_PATH
-  fi
-  snakemake -p $DRYRUN \
-            --directory /blobtoolkit/datasets \
-            --configfile /blobtoolkit/datasets/$ASSEMBLY.yaml \
-            --latency-wait 60 \
-            --rerun-incomplete \
-            --stats $ASSEMBLY.replaceHits.stats \
-            -j $THREADS \
-            -s /blobtoolkit/insdc-pipeline/Snakefile \
-            --resources btk=1
-
-  if [ $? -ne 0 ];then
-    echo "ERROR: failed during pipeline"
-    exit 1
-  fi
-
-
-  # Validate and transfer
-  snakemake -p $DRYRUN \
-            --directory /blobtoolkit/datasets/ \
-            --configfile /blobtoolkit/datasets/$ASSEMBLY.yaml \
-            --latency-wait 60 \
-            --rerun-incomplete \
-            --stats $ASSEMBLY.snakemake.stats \
-            -j $THREADS \
-            -s /blobtoolkit/insdc-pipeline/transferCompleted.smk \
-            --resources btk=1 \
-            --config destdir=/blobtoolkit/output
-
-  if [ $? -ne 0 ];then
-    echo "ERROR: failed during transferCompleted"
-    exit 1
+    if [ $? -ne 0 ];then
+      echo "ERROR: failed during pipeline"
+      exit 1
+    fi
   fi
 
+  if [[ -z $PIPELINE_ONLY ]]; then
+    # Validate and transfer
+    snakemake -p $DRYRUN \
+              --directory /blobtoolkit/datasets/ \
+              --configfile /blobtoolkit/datasets/$ASSEMBLY.yaml \
+              --latency-wait 60 \
+              --rerun-incomplete \
+              --stats $ASSEMBLY.snakemake.stats \
+              -j $THREADS \
+              -s /blobtoolkit/insdc-pipeline/transferCompleted.smk \
+              --resources btk=1 \
+              --config destdir=/blobtoolkit/output
+
+    if [ $? -ne 0 ];then
+      echo "ERROR: failed during transferCompleted"
+      exit 1
+    fi
+  fi
 fi
 
 
-tail -f /dev/null
