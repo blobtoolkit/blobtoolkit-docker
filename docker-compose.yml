@@ -1,0 +1,24 @@
+version: "3.8"
+
+networks:
+  btk_test_net:
+    name: btk_test_net
+
+services:
+  sut:
+    build: tests/.
+    environment:
+      - DEBUG
+      - PATTERN
+    networks:
+      - btk_test_net
+    volumes:
+      - "${PWD}/tests:/tests:ro"
+
+  btk:
+    build: .
+    networks:
+      - btk_test_net
+
+
+    

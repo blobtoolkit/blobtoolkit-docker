@@ -1,0 +1,22 @@
+assembly:
+  level: scaffold
+  prefix: WJFA01
+  span: 259678574
+busco:
+  lineages:
+    - arthropoda_odb10
+    - metazoa_odb10
+    - eukaryota_odb10
+reads:
+  paired:
+    - - SRR9066814
+      - ILLUMINA
+      - null
+      - /path/to/SRR9066814_1.fastq.gz;/path/to/SRR9066814_2.fastq.gz
+similarity:
+  defaults:
+    mask_ids:
+      - 332383
+taxon:
+  name: Pseudobourletiella spinata
+  taxid: 332384

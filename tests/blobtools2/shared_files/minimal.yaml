@@ -1,0 +1,5 @@
+assembly:
+  level: scaffold
+  prefix: minimal
+taxon:
+  name: Genus species

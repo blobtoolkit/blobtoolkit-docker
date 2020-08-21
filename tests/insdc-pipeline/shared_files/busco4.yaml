@@ -1,0 +1,10 @@
+assembly:
+  level: scaffold
+  prefix: minimal
+  span: 1234
+busco:
+  lineages:
+    - actinopterygii_odb10
+taxon:
+  name: Genus species
+  taxid: 1234

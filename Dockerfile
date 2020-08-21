@@ -1,14 +1,14 @@
 FROM genomehubs/blobtoolkit-dependencies:1.3
 LABEL maintainer="blobtoolkit@genomehubs.org"
 LABEL license="MIT"
-LABEL version="1.3.1"
+LABEL version="1.3.3"
 
 WORKDIR /blobtoolkit
 
-ENV CONTAINER_VERSION=1.3.1
+ENV CONTAINER_VERSION=1.3.3
 
-RUN git clone -b release/v2.3.1 https://github.com/blobtoolkit/blobtools2 \
-    && git clone -b release/v1.3.1 https://github.com/blobtoolkit/insdc-pipeline \
+RUN git clone -b release/v2.3.2 https://github.com/blobtoolkit/blobtools2 \
+    && git clone -b release/v1.3.2 https://github.com/blobtoolkit/insdc-pipeline \
     && git clone -b release/v1.0 https://github.com/blobtoolkit/specification \
     && git clone -b release/v1.2 https://github.com/blobtoolkit/viewer
 
@@ -22,6 +22,16 @@ WORKDIR /blobtoolkit/viewer
 
 RUN npm install
 
+WORKDIR /blobtoolkit/databases/ncbi_taxdump
+
+RUN curl -L ftp://ftp.ncbi.nih.gov/pub/taxonomy/new_taxdump/new_taxdump.tar.gz | tar xzf -;
+
+ENV PYTHONPATH $CONDA_DIR/envs/btk_env/lib/python3.7/site-packages:$PYTHONPATH
+
+RUN printf '>seq\nACGT\n' > /tmp/assembly.fasta \
+    && blobtools create --fasta /tmp/assembly.fasta --taxid 3702 --taxdump ./ /tmp/dataset \
+    && rm -r /tmp/*
+
 WORKDIR /blobtoolkit
 
 COPY startup.sh /blobtoolkit
@@ -29,7 +39,5 @@ COPY startup.sh /blobtoolkit
 COPY .env /blobtoolkit/viewer
 
 EXPOSE 8000 8080
-
-ENV PYTHONPATH $CONDA_DIR/envs/btk_env/lib/python3.7/site-packages:$PYTHONPATH
 
 CMD /blobtoolkit/startup.sh
