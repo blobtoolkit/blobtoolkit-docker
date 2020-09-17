@@ -1,7 +1,7 @@
 FROM ubuntu:18.04
 LABEL maintainer="blobtoolkit@genomehubs.org"
 LABEL license="MIT"
-LABEL version="1.3"
+LABEL version="1.4"
 
 RUN apt-get update && apt-get -y install \
     build-essential \
@@ -87,7 +87,7 @@ RUN $CONDA_DIR/bin/conda create -n busco3_env -c bioconda -c conda-forge -y \
     yq
 
 RUN $CONDA_DIR/bin/conda create -n busco4_env -c bioconda -c conda-forge -y \
-    busco=4.0.6
+    busco=4.1.2
 
 RUN mkdir -p /blobtoolkit/wrappers \
     && mkdir -p /blobtoolkit/.conda

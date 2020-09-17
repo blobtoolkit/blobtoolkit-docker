@@ -11,12 +11,9 @@ cp /tests/insdc-pipeline/shared_files/$ASSEMBLY.fasta ./
 snakemake -p \
           --directory ./ \
           --configfile /tests/insdc-pipeline/shared_files/busco4.yaml \
-          --latency-wait 60 \
-          --rerun-incomplete \
           --stats $ASSEMBLY.replaceHits.stats \
           -j 1 \
-          -s /blobtoolkit/insdc-pipeline/tests/test_run_busco4.smk \
-          --resources btk=1
+          -s /blobtoolkit/insdc-pipeline/tests/test_run_busco4.smk &&
 
 cat minimal.busco.$LINEAGE.txt &&
 

@@ -14,6 +14,7 @@ services:
       - btk_test_net
     volumes:
       - "${PWD}/tests:/tests:ro"
+      - "${PWD}/../tmp:/tmp/insdc-pipeline/run_busco4"
 
   btk:
     build: .
