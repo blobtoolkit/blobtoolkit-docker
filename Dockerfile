@@ -12,8 +12,6 @@ RUN git clone -b release/v2.5.0 https://github.com/blobtoolkit/blobtools2 \
     && git clone -b release/v2.5.0 https://github.com/blobtoolkit/specification \
     && git clone -b release/v2.5.0 https://github.com/blobtoolkit/viewer
 
-# RUN rm -rf */.git
-
 ENV CONDA_DEFAULT_ENV btk_env
 
 ARG CONDA_DIR=/home/blobtoolkit/miniconda3
@@ -30,8 +28,7 @@ RUN curl -L ftp://ftp.ncbi.nih.gov/pub/taxonomy/new_taxdump/new_taxdump.tar.gz |
 
 ENV PYTHONPATH $CONDA_DIR/envs/btk_env/lib/python3.7/site-packages:$PYTHONPATH
 
-RUN pip install tolkein
-RUN pip install ujson
+RUN pip install -r blobtools2/requirements.txt
 
 RUN printf '>seq\nACGT\n' > /tmp/assembly.fasta \
     && blobtools create --fasta /tmp/assembly.fasta --taxid 3702 --taxdump ./ /tmp/dataset \
