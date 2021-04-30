@@ -30,6 +30,8 @@ RUN curl -L ftp://ftp.ncbi.nih.gov/pub/taxonomy/new_taxdump/new_taxdump.tar.gz |
 
 ENV PYTHONPATH $CONDA_DIR/envs/btk_env/lib/python3.7/site-packages:$PYTHONPATH
 
+RUN pip install tolkein
+
 RUN printf '>seq\nACGT\n' > /tmp/assembly.fasta \
     && blobtools create --fasta /tmp/assembly.fasta --taxid 3702 --taxdump ./ /tmp/dataset \
     && rm -r /tmp/*
