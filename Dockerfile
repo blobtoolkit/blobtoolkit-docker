@@ -26,9 +26,11 @@ WORKDIR /blobtoolkit/databases/ncbi_taxdump
 
 RUN curl -L ftp://ftp.ncbi.nih.gov/pub/taxonomy/new_taxdump/new_taxdump.tar.gz | tar xzf -;
 
-ENV PYTHONPATH $CONDA_DIR/envs/btk_env/lib/python3.7/site-packages:$PYTHONPATH
+# as the python3.7 ujson doesn't work with 3.8+
+RUN pip install tolkein
+RUN pip install ujson
 
-RUN pip install -r blobtools2/requirements.txt
+ENV PYTHONPATH $CONDA_DIR/envs/btk_env/lib/python3.7/site-packages:$PYTHONPATH
 
 RUN printf '>seq\nACGT\n' > /tmp/assembly.fasta \
     && blobtools create --fasta /tmp/assembly.fasta --taxid 3702 --taxdump ./ /tmp/dataset \
