@@ -26,9 +26,9 @@ WORKDIR /blobtoolkit/databases/ncbi_taxdump
 
 RUN curl -L ftp://ftp.ncbi.nih.gov/pub/taxonomy/new_taxdump/new_taxdump.tar.gz | tar xzf -;
 
-# as the python3.7 ujson doesn't work with 3.8+
+# as the python3.7 pythonpath thing doesn't work
 RUN pip install tolkein
-RUN pip install ujson
+RUN pip install -r $WORKDIR/blobtools2/requirements.txt
 
 ENV PYTHONPATH $CONDA_DIR/envs/btk_env/lib/python3.7/site-packages:$PYTHONPATH
 
