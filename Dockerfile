@@ -28,7 +28,7 @@ RUN curl -L ftp://ftp.ncbi.nih.gov/pub/taxonomy/new_taxdump/new_taxdump.tar.gz |
 
 # as the python3.7 pythonpath thing doesn't work
 RUN pip install tolkein
-RUN pip install -r $WORKDIR/blobtools2/requirements.txt
+RUN pip install -r /blobtoolkit/blobtools2/requirements.txt
 
 ENV PYTHONPATH $CONDA_DIR/envs/btk_env/lib/python3.7/site-packages:$PYTHONPATH
 
