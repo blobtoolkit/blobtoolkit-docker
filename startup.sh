@@ -28,10 +28,6 @@ if [[ ! -z $ASSEMBLY ]]; then
   fi
   if [[ ! -z $DRYRUN ]]; then
     DRYRUN="-n"
-    if [[ ! -e "/blobtoolkit/datasets/busco_downloads/file_versions.tsv" ]]; then
-        mkdir -p "/blobtoolkit/datasets/busco_downloads" &&
-        wget -q -O "/blobtoolkit/datasets/busco_downloads/file_versions.tsv" "https://busco-data.ezlab.org/v4/data/file_versions.tsv"
-    fi
   fi
 
   # Check the working directory is unlocked in case a previous run failed
@@ -49,10 +45,6 @@ if [[ ! -z $ASSEMBLY ]]; then
 
   if [[ -z $VALIDATE_ONLY ]]; then
     # Run pipeline
-    export AUGUSTUS_CONFIG_PATH=/blobtoolkit/datasets/augustus_conf
-    if [ ! -d $AUGUSTUS_CONFIG_PATH ]; then
-      cp -r /home/blobtoolkit/miniconda3/envs/busco4_env/config $AUGUSTUS_CONFIG_PATH
-    fi
     snakemake -p $DRYRUN \
               --directory /blobtoolkit/datasets \
               --configfile /blobtoolkit/datasets/$ASSEMBLY.yaml \
