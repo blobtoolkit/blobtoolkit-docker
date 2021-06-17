@@ -1,9 +1,9 @@
 FROM ubuntu:20.04
 LABEL maintainer="blobtoolkit@genomehubs.org"
 LABEL license="MIT"
-LABEL version="2.5.0"
+LABEL version="2.6.0"
 
-ENV CONTAINER_VERSION=2.5.0
+ENV CONTAINER_VERSION=2.6.0
 
 RUN apt-get update \
     && DEBIAN_FRONTEND="noninteractive" apt-get -y install \
@@ -48,10 +48,10 @@ RUN mkdir -p /blobtoolkit/.conda
 
 WORKDIR /blobtoolkit
 
-RUN git clone -b release/v2.5.0 https://github.com/blobtoolkit/blobtools2 \
-    && git clone -b release/v2.5.0 https://github.com/blobtoolkit/insdc-pipeline \
-    && git clone -b release/v2.5.0 https://github.com/blobtoolkit/specification \
-    && git clone -b release/v2.5.0 https://github.com/blobtoolkit/viewer
+RUN git clone -b release/v2.6.0 https://github.com/blobtoolkit/blobtools2 \
+    && git clone -b release/v2.6.0 https://github.com/blobtoolkit/insdc-pipeline \
+    && git clone -b release/v2.6.0 https://github.com/blobtoolkit/specification \
+    && git clone -b release/v2.6.0 https://github.com/blobtoolkit/viewer
 
 ENV CONDA_DEFAULT_ENV btk_env
 
