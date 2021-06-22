@@ -1,9 +1,11 @@
 FROM ubuntu:20.04
 LABEL maintainer="blobtoolkit@genomehubs.org"
 LABEL license="MIT"
-LABEL version="2.6.0"
+ARG VERSION="2.6.1"
+LABEL version=$VERSION
 
-ENV CONTAINER_VERSION=2.6.0
+
+ENV CONTAINER_VERSION=$VERSION
 
 RUN apt-get update \
     && DEBIAN_FRONTEND="noninteractive" apt-get -y install \
@@ -40,22 +42,20 @@ ARG CONDA_DIR=/home/blobtoolkit/miniconda3
 
 RUN echo ". $CONDA_DIR/etc/profile.d/conda.sh" >> ~/.bashrc
 
-COPY env.yaml /blobtoolkit/env.yaml
-
-RUN $CONDA_DIR/bin/conda env create -f /blobtoolkit/env.yaml
+RUN $CONDA_DIR/bin/conda install mamba -n base -c conda-forge
 
 RUN mkdir -p /blobtoolkit/.conda
 
 WORKDIR /blobtoolkit
 
-RUN git clone -b release/v2.6.0 https://github.com/blobtoolkit/blobtools2 \
-    && git clone -b release/v2.6.0 https://github.com/blobtoolkit/insdc-pipeline \
-    && git clone -b release/v2.6.0 https://github.com/blobtoolkit/specification \
-    && git clone -b release/v2.6.0 https://github.com/blobtoolkit/viewer
+RUN git clone -b release/v$VERSION https://github.com/blobtoolkit/blobtools2 \
+    && git clone -b release/v$VERSION https://github.com/blobtoolkit/pipeline \
+    && git clone -b release/v$VERSION https://github.com/blobtoolkit/specification \
+    && git clone -b release/v$VERSION https://github.com/blobtoolkit/viewer
+
+RUN $CONDA_DIR/bin/mamba env create -f /blobtoolkit/pipeline/env.yaml
 
 ENV CONDA_DEFAULT_ENV btk_env
-
-ARG CONDA_DIR=/home/blobtoolkit/miniconda3
 
 ENV PATH $CONDA_DIR/bin:/blobtoolkit/blobtools2:/blobtoolkit/specification:$CONDA_DIR/envs/btk_env/bin:$PATH
 
