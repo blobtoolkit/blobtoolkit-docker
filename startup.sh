@@ -13,69 +13,48 @@ if [[ ! -z $VIEWER ]]; then
 fi
 
 if [[ ! -z $ASSEMBLY ]]; then
+
+  export WORKDIR=/blobtoolkit/datasets/$ASSEMBLY
+
+  if [[ ! -f "$WORKDIR/config.yaml" ]]; then
+    echo "ERROR: unable to locate configuration file '$WORKDIR/config.yaml'"
+    exit 1
+  fi
+  
   if [[ -z $THREADS ]]; then
     export THREADS=32
   fi
-  if [[ -z $MAXCORE ]]; then
-    export MAXCORE=16
-  fi
-  if [[ -z $MULTICORE ]]; then
-    export MULTICORE=8
-  fi
-  if [[ ! -f "/blobtoolkit/datasets/$ASSEMBLY.yaml" ]]; then
-    echo "ERROR: unable to locate configuration file '/blobtoolkit/datasets/$ASSEMBLY.yaml'"
-    exit 1
-  fi
+
   if [[ ! -z $DRYRUN ]]; then
     DRYRUN="-n"
   fi
 
-  # Check the working directory is unlocked in case a previous run failed
-  snakemake -p \
-            -j 1 \
-            --directory /blobtoolkit/datasets \
-            --configfile /blobtoolkit/datasets/$ASSEMBLY.yaml \
-            -s /blobtoolkit/insdc-pipeline/Snakefile \
-            --unlock
+  if [[ -z $TOOL ]]; then
+    TOOL="blobtoolkit"
+  fi
+
+  snakemake -p $DRYRUN \
+            -j $THREADS \
+            --directory $WORKDIR/$TOOL \
+            --configfile $WORKDIR/config.yaml \
+            --latency-wait 60 \
+            --latency-wait 60 \
+            --rerun-incomplete \
+            --stats $WORKDIR/$TOOL.stats \
+            -s /blobtoolkit/pipeline/$TOOL.smk
 
   if [ $? -ne 0 ];then
-    echo "ERROR: failed while unlocking working directory"
+    echo "ERROR: failed to run snakemake pipeline"
     exit 1
   fi
 
-  if [[ -z $VALIDATE_ONLY ]]; then
-    # Run pipeline
-    snakemake -p $DRYRUN \
-              --directory /blobtoolkit/datasets \
-              --configfile /blobtoolkit/datasets/$ASSEMBLY.yaml \
-              --latency-wait 60 \
-              --rerun-incomplete \
-              --stats $ASSEMBLY.replaceHits.stats \
-              -j $THREADS \
-              -s /blobtoolkit/insdc-pipeline/Snakefile \
-              --resources btk=1
-
+  if [[ ! -z $TRANSFER ]]; then
+    /blobtoolkit/pipeline/scripts/transfer_completed.py \
+        --in $WORKDIR \
+        --out /blobtoolkit/output
+    
     if [ $? -ne 0 ];then
-      echo "ERROR: failed during pipeline"
-      exit 1
-    fi
-  fi
-
-  if [[ -z $PIPELINE_ONLY ]]; then
-    # Validate and transfer
-    snakemake -p $DRYRUN \
-              --directory /blobtoolkit/datasets/ \
-              --configfile /blobtoolkit/datasets/$ASSEMBLY.yaml \
-              --latency-wait 60 \
-              --rerun-incomplete \
-              --stats $ASSEMBLY.snakemake.stats \
-              -j $THREADS \
-              -s /blobtoolkit/insdc-pipeline/transferCompleted.smk \
-              --resources btk=1 \
-              --config destdir=/blobtoolkit/output
-
-    if [ $? -ne 0 ];then
-      echo "ERROR: failed during transferCompleted"
+      echo "ERROR: failed to transfer completed files"
       exit 1
     fi
   fi

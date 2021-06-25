@@ -19,16 +19,22 @@ RUN apt-get update \
     x11-utils
 
 RUN mkdir -p /blobtoolkit/conf \
-    && mkdir -p /blobtoolkit/data \
+    && mkdir -p /blobtoolkit/data/assembly \
+    && mkdir -p /blobtoolkit/data/reads \
+    && mkdir -p /blobtoolkit/data/other \
     && mkdir -p /blobtoolkit/databases/busco \
     && mkdir -p /blobtoolkit/databases/ncbi_db \
     && mkdir -p /blobtoolkit/databases/ncbi_taxdump \
     && mkdir -p /blobtoolkit/databases/uniprot_db \
     && mkdir -p /blobtoolkit/datasets \
-    && mkdir -p /blobtoolkit/output
+    && mkdir -p /blobtoolkit/output \
+    && mkdir -p /nfs \
+    && mkdir -p /lustre
 
 RUN useradd -m blobtoolkit \
-    && chown -R blobtoolkit:blobtoolkit /blobtoolkit
+    && chown -R blobtoolkit:blobtoolkit /blobtoolkit \
+    && chown -R blobtoolkit:blobtoolkit /nfs \
+    && chown -R blobtoolkit:blobtoolkit /lustre
 
 USER blobtoolkit
 
