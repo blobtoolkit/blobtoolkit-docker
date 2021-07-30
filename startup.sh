@@ -38,7 +38,6 @@ if [[ ! -z $ASSEMBLY ]]; then
             --directory $WORKDIR/$TOOL \
             --configfile $WORKDIR/config.yaml \
             --latency-wait 60 \
-            --latency-wait 60 \
             --rerun-incomplete \
             --stats $WORKDIR/$TOOL.stats \
             -s /blobtoolkit/pipeline/$TOOL.smk

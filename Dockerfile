@@ -1,9 +1,8 @@
 FROM ubuntu:20.04
 LABEL maintainer="blobtoolkit@genomehubs.org"
 LABEL license="MIT"
-ARG VERSION="2.6.1"
+ARG VERSION="2.6.2"
 LABEL version=$VERSION
-
 
 ENV CONTAINER_VERSION=$VERSION
 
