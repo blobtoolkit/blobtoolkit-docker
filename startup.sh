@@ -33,6 +33,15 @@ if [[ ! -z $ASSEMBLY ]]; then
     TOOL="blobtoolkit"
   fi
 
+  if [[ ! -z $UNLOCK ]]; then
+    snakemake -p \
+          -j 1 \
+          --directory $WORKDIR/$TOOL \
+          --configfile $WORKDIR/config.yaml \
+          --unlock \
+          -s /blobtoolkit/pipeline/$TOOL.smk
+  fi
+
   snakemake -p $DRYRUN \
             -j $THREADS \
             --directory $WORKDIR/$TOOL \

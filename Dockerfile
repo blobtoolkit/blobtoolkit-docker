@@ -86,4 +86,6 @@ COPY .env /blobtoolkit/viewer
 
 EXPOSE 8000 8080
 
+ENV PATH $CONDA_DIR/envs/btk_env/bin:$PATH
+
 CMD /blobtoolkit/startup.sh
