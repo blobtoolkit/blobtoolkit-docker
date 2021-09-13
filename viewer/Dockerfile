@@ -1,7 +1,7 @@
 FROM ubuntu:20.04
 LABEL maintainer="blobtoolkit@genomehubs.org"
 LABEL license="MIT"
-ARG VERSION="2.6.3"
+ARG VERSION="2.6.2"
 LABEL version=$VERSION
 
 ENV CONTAINER_VERSION=$VERSION
@@ -65,6 +65,9 @@ ENV CONDA_DEFAULT_ENV btk_env
 ENV PATH $CONDA_DIR/bin:/blobtoolkit/blobtools2:/blobtoolkit/specification:$CONDA_DIR/envs/btk_env/bin:$PATH
 
 WORKDIR /blobtoolkit/viewer
+
+ARG CACHEBUSTER 123
+RUN git fetch && git checkout -b feature/reload_key origin/feature/reload_key
 
 RUN npm install
 

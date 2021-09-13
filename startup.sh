@@ -10,6 +10,7 @@ if [[ ! -z $VIEWER ]]; then
   npm run client &
 
   tail -f /dev/null
+  exit
 fi
 
 if [[ ! -z $ASSEMBLY ]]; then

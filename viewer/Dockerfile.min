@@ -1,0 +1,37 @@
+FROM node:14-alpine
+LABEL maintainer="blobtoolkit@genomehubs.org"
+LABEL license="MIT"
+ARG VERSION="2.6.3"
+LABEL version=$VERSION
+
+ENV CONTAINER_VERSION=$VERSION
+
+RUN apk add --no-cache git
+
+RUN mkdir -p /blobtoolkit/conf \
+    && mkdir -p /blobtoolkit/datasets
+
+COPY viewer/startup.sh /blobtoolkit
+
+RUN addgroup -S blobtoolkit \
+    && adduser -S blobtoolkit -G blobtoolkit \
+    && chown -R blobtoolkit:blobtoolkit /blobtoolkit \
+    && chmod +x /blobtoolkit/startup.sh
+
+USER blobtoolkit
+
+WORKDIR /blobtoolkit
+
+RUN git clone -b release/v$VERSION https://github.com/blobtoolkit/viewer
+
+WORKDIR /blobtoolkit/viewer
+
+RUN npm install
+
+WORKDIR /blobtoolkit
+
+COPY .env /blobtoolkit/viewer
+
+EXPOSE 8000 8080
+
+CMD /blobtoolkit/startup.sh
