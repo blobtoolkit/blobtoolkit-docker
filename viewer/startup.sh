@@ -6,7 +6,10 @@ fi
 cd /blobtoolkit/viewer
 npm run api &
 sleep 5
-npm run client &
+
+if [[ ! -z $VIEWER ]]; then
+  npm run client &
+fi
 
 tail -f /dev/null
 exit
