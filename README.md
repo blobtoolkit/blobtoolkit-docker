@@ -1,3 +1,7 @@
+# ARCHIVED
+
+This repository has been archived as all code is now maintained as part of [blobtoolkit/blobtoolkit](https://github.com/blobtoolkit/blobtoolkit) under `src/docker`
+
 # BlobToolKit Docker Image
 
 Contains all code and dependencies for [BlobToolKit](https://blobtoolkit.genomehubs.org)
